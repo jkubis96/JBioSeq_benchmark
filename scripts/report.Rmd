@@ -146,7 +146,7 @@ knitr::include_graphics("../fig/PAX3_optimization_GC.svg")
 \
 
 
-### Sequences MFE
+### Sequences MFE [Minimum Free Energy]
 
 
 ```{r out.width="60%", fig.align='center', include=TRUE, echo=FALSE, warning=FALSE, message=FALSE}
@@ -318,6 +318,19 @@ knitr::include_graphics("../fig/PAX3_score.svg")
 ```{r out.width="60%", fig.align='center', include=TRUE, echo=FALSE, warning=FALSE, message=FALSE}
 knitr::include_graphics("../fig/KIT_score~gc.svg")
 knitr::include_graphics("../fig/PAX3_score~gc.svg")
+
+
+```
+
+
+\
+
+### Score ~ self-complementary [%]
+
+
+```{r out.width="60%", fig.align='center', include=TRUE, echo=FALSE, warning=FALSE, message=FALSE}
+knitr::include_graphics("../fig/KIT_score~complementary.svg")
+knitr::include_graphics("../fig/PAX3_score~complementary.svg")
 
 
 ```

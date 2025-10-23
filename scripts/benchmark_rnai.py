@@ -26,7 +26,7 @@ for i, _ in enumerate(consensuse['side']):
     res_rnai =  st.FindRNAi(consensuse['sequence'][i], 
                             metadata, 
                             length = 21, 
-                            n = 100, 
+                            n = 1500, 
                             max_repeat_len = 3, 
                             max_off = 1, 
                             species = 'human', 
@@ -84,7 +84,7 @@ for i, _ in enumerate(consensuse['side']):
     res_rnai =  st.FindRNAi(consensuse['sequence'][i], 
                             metadata, 
                             length = 21, 
-                            n = 100, 
+                            n = 500, 
                             max_repeat_len = 3, 
                             max_off = 1, 
                             species = 'human', 
@@ -160,21 +160,52 @@ def rnai_scroing_base(sequence):
 
     return score, sequence
 
+
+
 def find_self_complementarity(sequence, min_length=3):
     complement = {"A": "T", "T": "A", "C": "G", "G": "C"}
     self_complementary_regions = []
+    
+    max_range =  len(sequence)
 
-    for i in range(len(sequence) - min_length + 1):
-        for j in range(i + min_length, len(sequence) + 1):
-            subsequence = sequence[i:j]
-            reverse_complement = "".join(
-                complement[base] for base in subsequence[::-1]
-            )
+    while True:
+        
+        min_range = min_length
+    
+        intervals = list(range(min_range,max_range + 1,  1))
+        
+        if min_range + min_length  <= max(intervals):     
+            for i in intervals:
+                if i + min_length <= max_range:
+                    pre_seq = sequence[0:i]
+                    post_seq = sequence[i:i + min_length][::-1]
+                    post_seq_complement = ''.join([complement[x] for x in post_seq])
 
-            if subsequence == reverse_complement:
-                self_complementary_regions.append(subsequence)
-
+                    
+                    if post_seq_complement in pre_seq:
+                        self_complementary_regions.append((post_seq_complement,post_seq))
+                    
+                else:
+                    break
+                
+            min_length += 1
+        
+        else:
+            break
+        
+    # unification
+    self_complementary_regions = [
+        x for x in self_complementary_regions
+        if all(
+            x[0] not in y[0] and x[1] not in y[1]
+            for y in self_complementary_regions
+            if y != x
+        )
+    ]
+    
     return self_complementary_regions
+
+
 
 def repeat_scoring(seq, max_repeat_len):
     repeat_list = []
@@ -472,10 +503,11 @@ for i in df.index:
         df["RNAi_seq"][i], max_repeat_len
     )[1]
     df["GC%"][i] = round(
-        df["RNAi_seq"][i].count("C")
-        + df["RNAi_seq"][i].count("G") / len(df["RNAi_seq"][i]) * 100,
+        (df["RNAi_seq"][i].count("C")
+        + df["RNAi_seq"][i].count("G")) / len(df["RNAi_seq"][i]) * 100,
         2,
     )
+
 
 df = df.sort_values(
     by=["specificity", "repeated_motif_pct", "complemenatry_pct", "score"],
@@ -718,10 +750,11 @@ for i in df.index:
         df["RNAi_seq"][i], max_repeat_len
     )[1]
     df["GC%"][i] = round(
-        df["RNAi_seq"][i].count("C")
-        + df["RNAi_seq"][i].count("G") / len(df["RNAi_seq"][i]) * 100,
+        (df["RNAi_seq"][i].count("C")
+        + df["RNAi_seq"][i].count("G")) / len(df["RNAi_seq"][i]) * 100,
         2,
     )
+
 
 df = df.sort_values(
     by=["specificity", "repeated_motif_pct", "complemenatry_pct", "score"],
@@ -965,8 +998,8 @@ for i in df.index:
         df["RNAi_seq"][i], max_repeat_len
     )[1]
     df["GC%"][i] = round(
-        df["RNAi_seq"][i].count("C")
-        + df["RNAi_seq"][i].count("G") / len(df["RNAi_seq"][i]) * 100,
+        (df["RNAi_seq"][i].count("C")
+        + df["RNAi_seq"][i].count("G")) / len(df["RNAi_seq"][i]) * 100,
         2,
     )
 
@@ -1213,10 +1246,11 @@ for i in df.index:
         df["RNAi_seq"][i], max_repeat_len
     )[1]
     df["GC%"][i] = round(
-        df["RNAi_seq"][i].count("C")
-        + df["RNAi_seq"][i].count("G") / len(df["RNAi_seq"][i]) * 100,
+        (df["RNAi_seq"][i].count("C")
+        + df["RNAi_seq"][i].count("G")) / len(df["RNAi_seq"][i]) * 100,
         2,
     )
+
 
 df = df.sort_values(
     by=["specificity", "repeated_motif_pct", "complemenatry_pct", "score"],
@@ -1461,8 +1495,8 @@ for i in df.index:
         df["RNAi_seq"][i], max_repeat_len
     )[1]
     df["GC%"][i] = round(
-        df["RNAi_seq"][i].count("C")
-        + df["RNAi_seq"][i].count("G") / len(df["RNAi_seq"][i]) * 100,
+        (df["RNAi_seq"][i].count("C")
+        + df["RNAi_seq"][i].count("G")) / len(df["RNAi_seq"][i]) * 100,
         2,
     )
 
@@ -1708,10 +1742,11 @@ for i in df.index:
         df["RNAi_seq"][i], max_repeat_len
     )[1]
     df["GC%"][i] = round(
-        df["RNAi_seq"][i].count("C")
-        + df["RNAi_seq"][i].count("G") / len(df["RNAi_seq"][i]) * 100,
+        (df["RNAi_seq"][i].count("C")
+        + df["RNAi_seq"][i].count("G")) / len(df["RNAi_seq"][i]) * 100,
         2,
     )
+
 
 df = df.sort_values(
     by=["specificity", "repeated_motif_pct", "complemenatry_pct", "score"],
@@ -1956,10 +1991,11 @@ for i in df.index:
         df["RNAi_seq"][i], max_repeat_len
     )[1]
     df["GC%"][i] = round(
-        df["RNAi_seq"][i].count("C")
-        + df["RNAi_seq"][i].count("G") / len(df["RNAi_seq"][i]) * 100,
+        (df["RNAi_seq"][i].count("C")
+        + df["RNAi_seq"][i].count("G")) / len(df["RNAi_seq"][i]) * 100,
         2,
     )
+
 
 df = df.sort_values(
     by=["specificity", "repeated_motif_pct", "complemenatry_pct", "score"],
@@ -2203,10 +2239,11 @@ for i in df.index:
         df["RNAi_seq"][i], max_repeat_len
     )[1]
     df["GC%"][i] = round(
-        df["RNAi_seq"][i].count("C")
-        + df["RNAi_seq"][i].count("G") / len(df["RNAi_seq"][i]) * 100,
+        (df["RNAi_seq"][i].count("C")
+        + df["RNAi_seq"][i].count("G")) / len(df["RNAi_seq"][i]) * 100,
         2,
     )
+
 
 df = df.sort_values(
     by=["specificity", "repeated_motif_pct", "complemenatry_pct", "score"],

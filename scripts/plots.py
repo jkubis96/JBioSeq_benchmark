@@ -69,7 +69,7 @@ plt.ylabel('GC (%)')
 plt.tight_layout()
 plt.show()
 
-fig.savefig('KIT_GC.svg', dpi = 300)
+fig.savefig('fig/KIT_GC.svg', dpi = 300)
 
 
 
@@ -80,30 +80,7 @@ plt.xlabel('Tool')
 plt.ylabel('Score')
 plt.show()
 
-fig.savefig('KIT_score.svg', dpi = 300)
-
-
-
-##############################################################################
-
-max_score_df = df.loc[df.groupby('source')['score'].idxmax()]
-
-fig = plt.figure(figsize=(8, 6))
-sns.scatterplot(data=max_score_df, x='GC%', y='score', hue='source', s=150, edgecolor='black')
-
-plt.axvline(30, color='red', linestyle='--', label='Lower GC threshold')
-plt.axvline(60, color='blue', linestyle='--', label='Upper GC threshold')
-
-plt.title('Top detected siRNA [score ~ GC%] - KIT', fontsize=13)
-plt.xlabel('GC (%)')
-plt.ylabel('Score')
-
-plt.legend(title='', loc='upper right', bbox_to_anchor=(0.95, 1))
-
-plt.tight_layout()
-plt.show()
-
-fig.savefig('KIT_score~gc.svg', dpi = 300)
+fig.savefig('fig/KIT_score.svg', dpi = 300)
 
 
 ######################################################################################
@@ -137,7 +114,82 @@ plt.ylabel('Count')
 plt.tight_layout()
 plt.show()
 
-fig.savefig('KIT_complementary.svg', dpi = 300)
+fig.savefig('fig/KIT_complementary.svg', dpi = 300)
+
+
+
+##############################################################################
+import numpy as np
+
+max_score_df = df.loc[df.groupby('source')['score'].idxmax()]
+
+# shift for plotting
+max_score_df['GC%'][max_score_df['source'] == 'Invivogen'] = max_score_df['GC%'][max_score_df['source'] == 'Invivogen'] + 0.3
+
+max_score_df['complemenatry_pct_percent'][max_score_df['source'] == 'Invivogen'] = 0.25
+
+
+fig = plt.figure(figsize=(8, 6))
+
+
+
+
+sns.scatterplot(
+    data=max_score_df,
+    x='GC%',
+    y='score',
+    hue='source',
+    s=150,
+    edgecolor='black'
+)
+
+plt.axvline(30, color='red', linestyle='--', label='Lower GC threshold')
+plt.axvline(60, color='blue', linestyle='--', label='Upper GC threshold')
+
+plt.title('Top detected siRNA [score ~ GC%] - KIT', fontsize=13)
+plt.xlabel('GC (%)')
+plt.ylabel('Score')
+
+plt.legend(title='', loc='lower right', bbox_to_anchor=(0.95, 0.01))
+
+plt.grid(False)
+
+
+plt.tight_layout()
+plt.show()
+
+fig.savefig('fig/KIT_score~gc.svg', dpi = 300)
+
+
+
+
+fig = plt.figure(figsize=(8, 6))
+
+
+sns.scatterplot(
+    data=max_score_df,
+    x='complemenatry_pct_percent',
+    y='score',
+    hue='source',
+    s=150,
+    edgecolor='black'
+)
+
+
+plt.title('Top detected siRNA [score ~ self-complemenatry %] - KIT', fontsize=13)
+plt.xlabel('Self-complementary (%)')
+plt.ylabel('Score')
+
+plt.legend(title='', loc='upper right', bbox_to_anchor=(1, 1))
+
+plt.grid(False)
+
+plt.tight_layout()
+plt.show()
+
+fig.savefig('fig/KIT_score~complementary.svg', dpi = 300)
+
+
 
 
 
@@ -176,7 +228,7 @@ plt.ylabel('GC (%)')
 plt.tight_layout()
 plt.show()
 
-fig.savefig('PAX3_GC.svg', dpi = 300)
+fig.savefig('fig/PAX3_GC.svg', dpi = 300)
 
 
 
@@ -187,33 +239,12 @@ plt.xlabel('Tool')
 plt.ylabel('Score')
 plt.show()
 
-fig.savefig('PAX3_score.svg', dpi = 300)
+fig.savefig('fig/PAX3_score.svg', dpi = 300)
 
 
 
 ##############################################################################
 
-max_score_df = df.loc[df.groupby('source')['score'].idxmax()]
-
-fig = plt.figure(figsize=(8, 6))
-sns.scatterplot(data=max_score_df, x='GC%', y='score', hue='source', s=150, edgecolor='black')
-
-plt.axvline(30, color='red', linestyle='--', label='Lower GC threshold')
-plt.axvline(60, color='blue', linestyle='--', label='Upper GC threshold')
-
-plt.title('Top detected siRNA [score ~ GC%] - PAX3', fontsize=13)
-plt.xlabel('GC (%)')
-plt.ylabel('Score')
-
-plt.legend(title='', loc='upper right', bbox_to_anchor=(0.95, 1))
-
-plt.tight_layout()
-plt.show()
-
-fig.savefig('PAX3_score~gc.svg', dpi = 300)
-
-
-######################################################################################
 
 
 import ast
@@ -244,11 +275,59 @@ plt.ylabel('Count')
 plt.tight_layout()
 plt.show()
 
-fig.savefig('PAX3_complementary.svg', dpi = 300)
+fig.savefig('fig/PAX3_complementary.svg', dpi = 300)
 
 
 ################################################################################
 
+
+
+max_score_df = df.loc[df.groupby('source')['score'].idxmax()]
+
+# shift for plotting
+max_score_df['complemenatry_pct_percent'][max_score_df['source'] == 'Eurofinsgenomics'] = 0.25
+
+fig = plt.figure(figsize=(8, 6))
+sns.scatterplot(data=max_score_df, x='GC%', y='score', hue='source', s=150, edgecolor='black')
+
+plt.axvline(30, color='red', linestyle='--', label='Lower GC threshold')
+plt.axvline(60, color='blue', linestyle='--', label='Upper GC threshold')
+
+plt.title('Top detected siRNA [score ~ GC%] - PAX3', fontsize=13)
+plt.xlabel('GC (%)')
+plt.ylabel('Score')
+
+plt.legend(title='', loc='lower right', bbox_to_anchor=(0.95, 0.01))
+
+plt.grid(False)
+
+plt.tight_layout()
+plt.show()
+
+fig.savefig('fig/PAX3_score~gc.svg', dpi = 300)
+
+
+
+
+fig = plt.figure(figsize=(8, 6))
+sns.scatterplot(data=max_score_df, x='complemenatry_pct_percent', y='score', hue='source', s=150, edgecolor='black')
+
+plt.title('Top detected siRNA [score ~ self-complemenatry %] - PAX3', fontsize=13)
+plt.xlabel('Self-complementary (%)')
+plt.ylabel('Score')
+
+plt.legend(title='', loc='upper right', bbox_to_anchor=(1, 1))
+
+plt.grid(False)
+
+plt.tight_layout()
+plt.show()
+
+fig.savefig('fig/PAX3_score~complementary.svg', dpi = 300)
+
+
+
+###############################################################################
 
 ## codon optimization
 
@@ -270,25 +349,25 @@ for gene in genes:
     fig = plt.figure(figsize=(10,6))
     sns.barplot(x="tool", y="GC", data=sub, palette="Set2", ci="sd", edgecolor="black")
     sns.stripplot(x="tool", y="GC", data=sub, color="black", size=6, jitter=True)
-    plt.title(f"{gene} — GC%")
+    plt.title(f"{gene} - GC%")
     plt.ylabel("GC [%]")
     plt.xlabel("Sequence/Tool")
     plt.tight_layout()
     plt.show()
     
-    fig.savefig(f'{gene}_optimization_GC.svg', dpi = 300)
+    fig.savefig(f'fig/{gene}_optimization_GC.svg', dpi = 300)
     
     
     fig = plt.figure(figsize=(10,6))
     sns.barplot(x="tool", y="freq", data=sub, palette="Set2", ci="sd", edgecolor="black")
     sns.stripplot(x="tool", y="freq", data=sub, color="black", size=6, jitter=True)
-    plt.title(f"{gene} — Codon Frequency")
+    plt.title(f"{gene} - Codon Frequency")
     plt.ylabel("Codon Frequency")
     plt.xlabel("Sequence/Tool")
     plt.tight_layout()
     plt.show()
     
-    fig.savefig(f'{gene}_optimization_freq.svg', dpi = 300)
+    fig.savefig(f'fig/{gene}_optimization_freq.svg', dpi = 300)
     
      
     fig = plt.figure(figsize=(10,6))
@@ -300,19 +379,19 @@ for gene in genes:
     plt.tight_layout()
     plt.show()
     
-    fig.savefig(f'{gene}_optimization_bases.svg', dpi = 300)
+    fig.savefig(f'fig/{gene}_optimization_bases.svg', dpi = 300)
     
     
     fig = plt.figure(figsize=(10,6))
     sns.barplot(x="tool", y="changed_codons %", data=sub, palette="Set2", ci="sd", edgecolor="black")
     sns.stripplot(x="tool", y="changed_codons %", data=sub, color="black", size=6, jitter=True)
-    plt.title(f"{gene} — Changed codons")
+    plt.title(f"{gene} - Changed codons")
     plt.ylabel("Changed codons [%]")
     plt.xlabel("Sequence/Tool")
     plt.tight_layout()
     plt.show()
     
-    fig.savefig(f'{gene}_optimization_codons.svg', dpi = 300)
+    fig.savefig(f'fig/{gene}_optimization_codons.svg', dpi = 300)
 
 
     fig = plt.figure(figsize=(10,6))
@@ -324,7 +403,7 @@ for gene in genes:
     plt.tight_layout()
     plt.show()
     
-    fig.savefig(f'{gene}_optimization_MEF.svg', dpi = 300)
+    fig.savefig(f'fig/{gene}_optimization_MEF.svg', dpi = 300)
 
 
     # --- GC vs MFE (scatter) ---
@@ -343,10 +422,14 @@ for gene in genes:
     
     plt.grid(False)
     
+    plt.legend(title='', loc='upper right', bbox_to_anchor=(0.99, 1))
+    
+    plt.axvline(x=60, color='red', linestyle='--', linewidth=2, label='')
+
     plt.tight_layout()
     plt.show()
     
-    fig.savefig(f'{gene}_optimization_MEF_GC.svg', dpi = 300)
+    fig.savefig(f'fig/{gene}_optimization_MEF_GC.svg', dpi = 300)
 
 
 native = df[df["tool"] == "Native"].set_index("gene")
@@ -366,7 +449,7 @@ for gene in genes:
     plt.tight_layout()
     plt.show()
     
-    fig.savefig(f'{gene}_optimization_deltaMEF.svg', dpi = 300)
+    fig.savefig(f'fig/{gene}_optimization_deltaMEF.svg', dpi = 300)
 
 
 
@@ -405,7 +488,7 @@ for gene in genes:
     plt.tight_layout()
     plt.show()
     
-    fig.savefig(f'{gene}_optimization_heatmap.svg', dpi = 300)
+    fig.savefig(f'fig/{gene}_optimization_heatmap.svg', dpi = 300)
 
 
 
