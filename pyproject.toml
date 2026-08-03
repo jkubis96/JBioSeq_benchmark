@@ -1,0 +1,27 @@
+[project]
+name = "jbst-benchmark"
+version = "0.1.1"
+description = ""
+authors = [
+    {name = "Jakub Kubis - JBS",email = "jbiosystem@gmail.com"}
+]
+
+requires-python = ">=3.8,<3.11"
+dependencies = [
+    "jbioseqtools (>=2.2.0)"
+   
+
+   
+                
+                            ]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.poetry.group.dev.dependencies]
+spyder-kernels = "2.4"
+
+

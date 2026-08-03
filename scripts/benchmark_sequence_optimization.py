@@ -1,19 +1,119 @@
+import json
+import pandas as pd
+
+with open("random_CDS.json", "r", encoding="utf-8") as f:
+    CDS = json.load(f)
+
+
+condb = pd.DataFrame()
+
+for k in CDS.keys():
+    df = pd.json_normalize(CDS[k])
+    df['type'] = k
+    
+    condb = pd.concat([condb,df])
+    
+condb.to_excel('random_CDS.xlsx', index=False)
+
+
+
+
+import pandas as pd
+
+condb = pd.read_excel('random_CDS.xlsx')
 from jbst import seq_tools as st
 
+metadata = st.load_metadata(linkers = False, 
+                                    loops = False, 
+                                    regulators = False, 
+                                    fluorescent_tag = False, 
+                                    promoters = False, 
+                                    polya = False, 
+                                    marker = False, 
+                                    utr5 = False, 
+                                    utr3 = False) 
 
 
-# Test1
 
-metadata = st.load_metadata() 
+from tqdm import tqdm
+import re
+condb = condb.reset_index(drop = True)
+
+condb['aa'] = None
+condb['frequence'] = None
+condb['mfe'] = None
+condb['gc'] = None
+condb['jbst_sequence'] = None
+condb['jbst_mfe'] = None
+condb['jbst_gc'] = None
+condb['jbst_frequence'] = None
+condb['jbst_G_max[n]'] = None
+condb['jbst_A_max[n]'] = None
+condb['jbst_C_max[n]'] = None
+condb['jbst_T_max[n]'] = None
+condb['jbst_codon_change'] = None
+condb['jbst_nucleotide_change'] = None
+
+
+
+for i in tqdm(condb.index):
+    
+    tmp = st.codon_optimization(condb.loc[i,'seq'], metadata, species = 'human')
+    
+    condb.loc[i,'frequence'] = tmp['frequence'][0]
+    condb.loc[i,'aa'] = tmp['sequence_aa'][0]
+    condb.loc[i,'jbst_sequence'] = tmp['sequence_na'][1]
+    condb.loc[i,'jbst_mfe'] = tmp['MFE'][1]
+    condb.loc[i,'jbst_gc'] = tmp['GC%'][1]
+    condb.loc[i,'mfe'] = tmp['MFE'][0]
+    condb.loc[i,'gc'] = tmp['GC%'][0]
+    condb.loc[i,'jbst_frequence'] = tmp['frequence'][1]
+    for r in list(range(1,20, 1)):
+        for n in ['A', 'C', 'T', 'G']:
+            if n*r in tmp['sequence_na'][1]:
+                condb.loc[i,f'jbst_{n}_max[n]'] = r
+    
+    results_1 = st.compare_sequences(tmp['sequence_na'][0], 
+                        'native',
+                        tmp['sequence_na'][1], 
+                        'jbst',
+                        sep = 1)
+    pct = float(re.sub(r".*Changed positions percent \[%\]: ([0-9.]+).*", r"\1", results_1, flags=re.S))
+    pct = round(pct, 2)
+    condb.loc[i,'jbst_nucleotide_change'] = pct
 
     
+    
+    results_2 = st.compare_sequences(tmp['sequence_na'][0], 
+                        'native',
+                        tmp['sequence_na'][1], 
+                        'jbst',
+                        sep = 3)
+    
+    pct2 = float(re.sub(r".*Changed positions percent \[%\]: ([0-9.]+).*", r"\1", results_2, flags=re.S))
+    pct2 = round(pct2, 2)
+    
+    condb.loc[i,'jbst_codon_change'] = pct2
+
+                
+
+
+
+
+
+
+condb.to_excel('random_CDS_jbst_extended.xlsx', index=False)
+
+
+
+
 
 
 seq = st.get_sequences_gene('KIT', species = 'human', max_results = 20)
     
 
-sequence = st.load_sequence()
-sequence = st.clear_sequence(sequence)
+sequence = load_sequence()
+sequence = clear_sequence(sequence)
 
 
 
